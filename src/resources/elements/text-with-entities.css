@@ -1,0 +1,11 @@
+
+
+text-with-entities a {
+	cursor: pointer;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+/* text-with-entities a:hover { */
+/* 	text-decoration: none; */
+/* } */
