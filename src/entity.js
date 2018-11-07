@@ -137,7 +137,6 @@ export class Entity {
 					this.fixDetails();
 				}
 			});
-			// this.mediaItems = await this.store.getNamedEntityMediaItems(params.entityID);
 		}
 	}
 
@@ -160,7 +159,7 @@ export class Entity {
 		}
 
 		if(this.services.altTouch || event.altKey || event.ctrlKey || event.shiftKey || event.metaKey) {
-			// use any modifier as and excuse to open in separate tab/window
+			// use any modifier as an excuse to open in separate tab/window
 			// const url = this.router.generate(route, params);
 			window.open(url, '_blank');
 		} else {

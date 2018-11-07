@@ -12,7 +12,6 @@
 			<span class="truncate node">
 				<a route-href="route: trending" class="truncate node">Queries</a>
 			</span>
-			<!-- <span if.bind="params.queryID && params.queryID != 'all'" class="truncate node"> -->
 			<span if.bind="params.queryID && params.queryID != 'all'" class="truncate node">
 				&nbsp;&gt;
 				<a route-href="route: stories; params.bind: {queryID: params.queryID}" title="Stories of Query: ${query.name}">
@@ -27,51 +26,37 @@
 			</span>
 			<span if.bind="params.pastHour && params.entity && params.queryID" class="truncate node">
 				&nbsp;&gt;
-					<!-- title="Media Items of Query: ${query.name || 'All'} and Entity: ${params.entity} for past hour: -${pastHour}"> -->
-					<!-- <span title="Media Items of Query: ${query.name || 'All'} and Entity: ${params.entity} for past hour: -${pastHour}"> -->
 				<a route-href="route: hour-media-items; params.bind: {queryID: params.queryID, pastHour: params.pastHour, entity: params.entity}"
 					title.bind="title">
 					<span title.bind="title">
-						<!-- <strong> -->
-							<span class="prefix">Media Items with Entity</span>
-							${params.entity}
-							<span class="prefix">of Query</span>
-							${query.name || 'All'}
-							<span class="prefix">from</span>
-							${pastHour}h
-							<span class="prefix">ago</span>
-						<!-- </strong> -->
+						<span class="prefix">Media Items with Entity</span>
+						${params.entity}
+						<span class="prefix">of Query</span>
+						${query.name || 'All'}
+						<span class="prefix">from</span>
+						${pastHour}h
+						<span class="prefix">ago</span>
 					</span>
 				</a>
 			</span>
 			<span if.bind="params.pastHour && params.feedID" class="truncate node">
 				&nbsp;&gt;
-					<!-- title="Media Items from Feed: ${feed.name} for past hour: -${pastHour}"> -->
-					<!-- <span title="Media Items from Feed: ${feed.name} for past hour: -${pastHour}"> -->
 				<a route-href="route: feed-hour-media-items; params.bind: {feedID: params.feedID, pastHour: params.pastHour}"
 					title.bind="title">
 					<span title.bind="title">
-						<!-- <strong> -->
-							<span class="prefix">Media Items for Feed</span>
-							${feed.name}
-							<span class="prefix">from</span>
-							${pastHour}h
-							<span class="prefix">ago</span>
-						<!-- </strong> -->
+						<span class="prefix">Media Items for Feed</span>
+						${feed.name}
+						<span class="prefix">from</span>
+						${pastHour}h
+						<span class="prefix">ago</span>
 					</span>
 				</a>
 			</span>
 			<span if.bind="params.mediaItemID" class="truncate node">
 				&nbsp;&gt;
-				<!-- <a route-href="route: media-item; params.bind: {queryID: params.queryID, storyID: params.storyID, mediaItemID: params.mediaItemID}" -->
-				<!-- 	title="Media Item: ${mediaItemTitle}"> -->
-				<!-- 	title="Media Item: ${mediaItem.title.english}"> -->
-					<span title="Media Item: ${mediaItemTitle}">
-					<!-- <span title="Media Item: ${mediaItem.title.english}"> -->
-						<strong><span class="prefix">Media Item:</span> ${mediaItemTitle}</strong>
-						<!-- <strong><span class="prefix">Media Item:</span> ${mediaItem.title.english}</strong> -->
-					</span>
-				<!-- </a> -->
+				<span title="Media Item: ${mediaItemTitle}">
+					<strong><span class="prefix">Media Item:</span> ${mediaItemTitle}</strong>
+				</span>
 			</span>
 		</div>
 	</div>
@@ -81,13 +66,13 @@
 	<require from="resources/value-converters/number-format"></require>
 	<require from="icons/bookmark-border"></require>
 	<require from="./media-item.css"></require>
+	<require from="resources/attributes/url-like"></require>
+	<require from="resources/elements/universal-video"></require>
+	<require from="resources/elements/tab"></require>
+	<require from="resources/elements/tabset"></require>
+	<require from="resources/elements/transcript"></require>
 	<div class="fill content" style="top: 80px">
 		<div class="fill margin20">
-			<require from="resources/attributes/url-like"></require>
-			<require from="resources/elements/universal-video"></require>
-			<require from="resources/elements/tab"></require>
-			<require from="resources/elements/tabset"></require>
-			<require from="resources/elements/transcript"></require>
 			<template with.bind="mediaItem">
 				<span style="float: right; font-size: x-small; text-align: right; top: -6px; position: relative">
 					<em>
@@ -120,7 +105,6 @@
 							Next Chunk Media Item
 						</button>
 					</div>
-					<!-- <div class="fill border" style="left: 50%; margin-left: 10px; overflow-y: scroll"> -->
 					<div class="fill light-border" css="left: ${originalMultiMedia.videoURL?'50%':'0px'}"
 						style="margin-left-: 10px; overflow-y: scroll; padding: 10px"
 						-if.bind="teaser.english || teaser.original">
@@ -128,7 +112,6 @@
 							<strong>Teaser:</strong><br/>
 							<tabset content-style="margin-top: 10px">
 								<tab header="English" if.bind="teaser.english">
-									<!-- ${teaser.english} -->
 									<text-with-entities text.bind="teaser.english"
 										mentions.bind="namedEntities.mentionsIn.teaser"
 										entities.bind="namedEntities.entities"></text-with-entities>
@@ -159,7 +142,6 @@
 							<strong>Main Text:</strong><br/>
 							<tabset content-style="margin-top: 10px">
 								<tab header="English" if.bind="mainText.english">
-									<!-- ${mainText.english} -->
 									<text-with-entities text.bind="mainText.english"
 										mentions.bind="namedEntities.mentionsIn.mainText"
 										entities.bind="namedEntities.entities"></text-with-entities>
@@ -185,11 +167,9 @@
 										style="display: block; width: 100%"></transcript>
 								</tab>
 								<tab header="English" if.bind="transcript.english.text">
-									<!-- ${transcript.english.text} -->
 									<text-with-entities text.bind="transcript.english.text"
 										mentions.bind="namedEntities.mentionsIn.transcript"
 										entities.bind="namedEntities.entities"></text-with-entities>
-									<!-- ${transcript.english.text} -->
 								</tab>
 								<tab header="Original (${detectedLangCode})" if.bind="transcript.original.text" class="${detectedLangCode}">
 									${transcript.original.text}

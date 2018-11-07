@@ -193,8 +193,6 @@ export class TextWithEntities {
 		// 		this.colors.push(colors[key]);
 		// 	}
 		// }
-		// console.log(this.colors);
-		// console.log(colors);
 	}
 
 	attached() {

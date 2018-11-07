@@ -138,12 +138,11 @@ export class Store {
 	currentUser = { };
 	namedEntities = [];
 	bookmarks = [];
-	// currentUser = { id: '4996bc6b-32df-43ed-9d40-062ccf5c137e' };
 	currentUser = {};
+	// currentUser = { id: '4996bc6b-32df-43ed-9d40-062ccf5c137e' };
 	feedbackStatuses = [
 		{ value: undefined, label: 'Unresolved', hidden: true },
 		{ value: null, label: 'Unresolved' },
-		// { value: undefined, label: 'Unresolved' },
 		{ value: 'resolved', label: 'Resolved' },
 	];
 
@@ -151,13 +150,8 @@ export class Store {
 		this.http = http.configure(c => c);
 		this.notificationService = notificationService;
 		this.configPromise = this.http.fetch(configPath).then(response => response.json()).then(config => {
-			// console.log('CONFIG:', config);
-			// console.log(" REQUIRE>>:", require('/config.txt'));
-			// this.summaAPI = summaAPI.configure(c => c.withBaseUrl('http://87.110.211.231:8126/api/'));
-			// this.backendAPI = backendAPI.configure(c => c.withBaseUrl('http://localhost:3000/'));
 			this.newAPI = newAPI.configure(c => c
 					.withBaseUrl(config.api)
-					// .withBaseUrl('http://summa.leta.lv:8226/api/')
 					.withDefaults({
 					// 	credentials: 'same-origin',
 						headers: {
@@ -169,14 +163,14 @@ export class Store {
 					})
 					.withInterceptor({
 						request(request) {
-							console.log(`Requesting ${request.method} ${request.url}`);
+							log.debug(`Requesting ${request.method} ${request.url}`);
 							return request;
 						},
 						response(response) {
 							if(response.status < 200 || response.status >= 300) {
 								notificationService.danger(`API Error`);
 							}
-							console.log(`Received ${response.status} ${response.url}`);
+							log.debug(`Received ${response.status} ${response.url}`);
 							return response;
 						}
 					})
@@ -185,7 +179,6 @@ export class Store {
 	}
 
 	reset() {
-		// console.log('RESET');
 		function removeAll(array) {
 			array.splice(0, array.length);
 		}
@@ -200,7 +193,7 @@ export class Store {
 		removeAll(this.feedbackRatingTypes);
 	}
 	
-	// --- NEW API: general ---
+	// --- general ---
 
 	async fetch(url, method, body) {
 		if(!this.newAPI) {
@@ -272,9 +265,9 @@ export class Store {
 		let pretty = typeof body === 'object' ? JSON.stringify(body,null,4) : body;
 		if(response) {
 			let contentType = response.headers.get('Content-Type');
-			console.log(`${response.url} ${response.status} response (${contentType}): ${pretty}`);
+			log.debug(`${response.url} ${response.status} response (${contentType}): ${pretty}`);
 		} else {
-			console.log(`response: ${pretty}`);
+			log.debug(`Response: ${pretty}`);
 		}
 		return body;
 	}
@@ -292,9 +285,8 @@ export class Store {
 			let body = await response.text();
 			throw new ServerError(`${response.url} ${response.status}: expected JSON response, got (${contentType}): ${body}`, response, body);
 		}
-		let body = await response.json();
-		// return body;
 		// return await response.json();
+		let body = await response.json();
 		return this.debug(body, response, enabled);
 	}
 
@@ -341,23 +333,11 @@ export class Store {
 		return
 	}
 	
-	// --- NEW API: named entities ---
+	// --- named entities ---
 	
 	async getNamedEntities() {
 		return replaceArrayItems(this.namedEntities, (await this.json(this.get(`namedEntities`))).entities);
-		// let response = await this.newAPI.fetch(`namedEntities`);
-		// this.namedEntities = await response.json();
-		// return this.namedEntities.entities;
 	}
-
-	// DEPRECATED
-	// async getNamedEntityMediaItems(entity) {
-	// 	const mediaItems = (await this.json(this.post(`mediaItems/withNamedEntity`, { namedEntity: entity }))).latest100;
-	// 	for(const mediaItem of mediaItems) {
-	// 		mediaItem.timeAdded = moment(mediaItem.timeAdded);
-	// 	}
-	// 	return mediaItems;
-	// }
 
 	async getNamedEntityDetails(id) {
 		const entityDetails = (await this.json(this.get(`namedEntities/${id}`)));
@@ -367,7 +347,7 @@ export class Store {
 		return entityDetails;
 	}
 
-	// --- NEW API: users ---
+	// --- users ---
 	
 	async checkPassword(email, password) {
 		return await this.json(this.post(`users/checkPassword`, { email: email, password: password }));
@@ -378,7 +358,6 @@ export class Store {
 	}
 
 	async getUsers() {
-		// return replaceArrayItems(this.users, await this.json(this.get(`users`)));
 		let users = await this.json(this.get(`users`))
 		for(let user of users) {
 			if(!user.data) {
@@ -403,7 +382,6 @@ export class Store {
 	};
 
 	async addUser(user) {
-		// log.error(`POST /feeds not implemented`);
 		user = assignKeys({}, user, 'name', 'email', 'password', 'role', 'isSuspended', 'data');
 		if(user.isSuspended === undefined) {
 			user.isSuspended = false;
@@ -425,7 +403,7 @@ export class Store {
 		// 	// 	throw Error('currentPassword must be present to change password');
 		// 	// }
 		// }
-		user = assignExceptKeys({}, user, 'id');	// TODO: probably shoud use assignKeys({}, user, ...keys to include)
+		user = assignExceptKeys({}, user, 'id');	// or assignKeys({}, user, ...keys to include)
 		user = await this.json(this.patch(`users/${id}`, user));
 		updateArrayItem(this.users, user);
 		return user;
@@ -438,7 +416,7 @@ export class Store {
 		return this.addUser(user);
 	}
 
-	// --- NEW API: feeds ---
+	// --- feeds ---
 	
 	async getFeedTypes() {
 		return this.feedTypes = replaceArrayItems(this.feedTypes, await this.json(this.get(`feeds/feedTypes`)));
@@ -459,8 +437,6 @@ export class Store {
 	};
 
 	async addFeed(feed) {
-		// log.error(`POST /feeds not implemented`);
-		// TODO: must be fixed at API level
 		delete feed.feedGroups;
 		feed = await this.json(this.post(`feeds`, feed));
 		updateArrayItem(this.feeds, feed);
@@ -468,17 +444,14 @@ export class Store {
 	}
 
 	async updateFeed(feed) {
-		// TODO: must be fixed at API level
 		// delete feed.feedGroups;
-
 		if(!feed.feedGroups) {
 			feed.feedGroups = [];
 		} else {
 			feed.feedGroups = feed.feedGroups.map(group => typeof group === 'object' ? group.id : group);
 		}
-		this.feedGroups
 		let id = feed.id;
-		feed = assignExceptKeys({}, feed, 'id', 'status');	// TODO: probably shoud use assignKeys({}, feed, ...keys to include)
+		feed = assignExceptKeys({}, feed, 'id', 'status');	// or assignKeys({}, feed, ...keys to include)
 		feed = await this.json(this.patch(`feeds/${id}`, feed));
 		updateArrayItem(this.feeds, feed);
 		return feed;
@@ -507,7 +480,7 @@ export class Store {
 		return mediaItems;
 	}
 
-	// --- NEW API: feed groups ---
+	// --- feed groups ---
 
 	async getFeedGroups(global) {
 		if(global)
@@ -543,7 +516,7 @@ export class Store {
 		if(feedGroup.feeds) {
 			feedGroup.feeds = feedGroup.feeds.map(feed => typeof feed !== 'string' ? feed.id : feed);
 		}
-		feedGroup = assignExceptKeys({}, feedGroup, 'id');	// TODO: probably shoud use assignKeys({}, feedGroup, ...keys to include)
+		feedGroup = assignExceptKeys({}, feedGroup, 'id');	// or assignKeys({}, feedGroup, ...keys to include)
 		feedGroup = await this.json(this.patch(`feedGroups/${id}`, feedGroup));
 		updateArrayItem(this.feedGroups, feedGroup);
 		return feedGroup;
@@ -556,7 +529,7 @@ export class Store {
 		return this.addFeedGroup(feedGroup);
 	}
 	
-	// --- NEW API: queries ---
+	// --- queries ---
 
 	async getAllQueries() {
 		return this.queries = replaceArrayItems(this.queries, await this.json(this.get(`queries`)));
@@ -564,7 +537,6 @@ export class Store {
 
 	async getQueries(id) {
 		await this.ensureCurrentUser();
-		// console.log(this.currentUser);
 		if(id === undefined) {
 			id = this.currentUser.id;
 		}
@@ -586,12 +558,10 @@ export class Store {
 	async getQueryTrending(id) {
 		if(!id)
 			id = 'all';
-		// 	return await this.json(this.get(`queries/trending`));
 		return await this.json(this.get(`queries/${id}/trending`));
 	}
 
 	async getQueryStories(id) {
-		// return await this.json(this.get(`queries/${id}/stories`));
 		let query = await this.json(this.get(`queries/${id}/stories`));
 		if(id === 'all') {
 			if(query instanceof Array) {
@@ -609,11 +579,6 @@ export class Store {
 	async getQueryHourlyMediaItems(id, pastHour, entity) {
 		pastHour = pastHour.split('-', 2);
 		const params = { epochTimeSecs: pastHour[0], pastHourString: -parseInt(pastHour[1]) || '-0', namedEntity: entity };
-		// let url = `queries/${id}/trending/mediaItemSelection`;
-		// if(id === 'all') {
-		// 	url = `queries/trending/mediaItemSelection`;
-		// }
-		// let mediaItems = (await this.json(this.get(url, params))).mediaItems;
 		if(!id)
 			id = 'all';
 		let mediaItems = (await this.json(this.get(`queries/${id}/trending/mediaItemSelection`, params))).mediaItems;
@@ -654,7 +619,7 @@ export class Store {
 
 	async updateQuery(query) {
 		let id = query.id;
-		query = assignExceptKeys({}, query, 'id');	// TODO: probably shoud use assignKeys({}, query, ...keys to include)
+		query = assignExceptKeys({}, query, 'id');	// or assignKeys({}, query, ...keys to include)
 		if(query.feedGroups) {
 			query.feedGroups = query.feedGroups.map(feedGroup => typeof feedGroup === 'object' ? feedGroup.id : feedGroup);
 		}
@@ -673,14 +638,13 @@ export class Store {
 		return this.addQuery(query);
 	}
 
-	// --- NEW API: stories & media items ---
+	// --- stories & media items ---
 
 	async getStory(id) {
 		return await this.json(this.get(`stories/${id}`));
 	}
 
 	async getQueryStory(qid, id) {
-		// return await this.json(this.get(`queries/${qid}/stories/${id}`));
 		let story = await this.json(this.get(`queries/${qid}/stories/${id}`));
 		story.timeChanged = moment(story.timeChanged);
 		for(let mediaItem of story.mediaItems) {
@@ -690,14 +654,13 @@ export class Store {
 	}
 
 	async getMediaItem(id) {
-		// return await this.json(this.get(`mediaItems/${id}`));
 		let mediaItem = await this.json(this.get(`mediaItems/${id}`));
 		mediaItem.timeAdded = moment(mediaItem.timeAdded);
 		mediaItem.timeLastChanged = moment(mediaItem.timeLastChanged);
 		return mediaItem;
 	}
 
-	// --- NEW API: feedback ---
+	// --- feedback ---
 
 	async getFeedbackRatingTypes(id) {
 		return this.feedbackRatingTypes = await this.json(this.get(`feedback/ratingTypes`));
@@ -738,7 +701,7 @@ export class Store {
 
 	async updateFeedbackItem(feedback) {
 		let id = feedback.id;
-		feedback = assignExceptKeys({}, feedback, 'id', 'timeAdded');	// TODO: probably shoud use assignKeys({}, query, ...keys to include)
+		feedback = assignExceptKeys({}, feedback, 'id', 'timeAdded');	// or assignKeys({}, query, ...keys to include)
 		if(typeof feedback.user === 'object') {
 			feedback.user = feedback.user.id;
 		}
@@ -758,7 +721,7 @@ export class Store {
 		return this.feedbackStatuses;
 	}
 
-	// --- NEW API: bookmarks ---
+	// --- bookmarks ---
 
 	async getBookmarkTypes() {
 		// return this.bookmarkTypes = replaceArrayItems(this.bookmarkTypes, await this.json(this.get(`bookmarks/types`)));
@@ -820,7 +783,7 @@ export class Store {
 		await this.ensureCurrentUser();
 		let uid = this.currentUser.id;
 		let id = bookmark.id;
-		// bookmark = assignExceptKeys({}, bookmark, 'id', 'status');	// TODO: probably shoud use assignKeys({}, bookmark, ...keys to include)
+		// bookmark = assignExceptKeys({}, bookmark, 'id', 'status');	// or assignKeys({}, bookmark, ...keys to include)
 		bookmark = await this.json(this.patch(`users/${uid}/bookmarks/${id}`, bookmark));
 		bookmark.timeAdded = moment(bookmark.timeAdded);
 		updateArrayItem(this.bookmarks, bookmark);

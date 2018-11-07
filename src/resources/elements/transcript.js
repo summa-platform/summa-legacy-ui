@@ -104,7 +104,6 @@ export class Transcript {
 				addSpan(chunk);
 			}
 		}
-		// console.log('segments changed');
 	}
 
 	select(index) {
@@ -118,7 +117,6 @@ export class Transcript {
 	spanElementsChanged() {
 		// this.currentTime = 0;
 		this.currentIndex = 0;
-		// console.log('span elements:', this.spanElements);
 	}
 
 	timeChanged(time, oldTime) {

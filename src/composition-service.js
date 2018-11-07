@@ -1,5 +1,4 @@
 import {inject, bindable, observable, bindingMode, Aurelia} from 'aurelia-framework';
-// import {ViewFactory} from 'view-factory';
 import {Container} from 'aurelia-dependency-injection';
 import {CompositionEngine, ViewSlot, ViewResources, View} from 'aurelia-templating';
 
@@ -30,7 +29,6 @@ export class CompositionService {
 		// returns destroy function, viewModel is already provided, what about controller ?
 		return () => {
 			viewSlot.remove(view);
-			// console.log(view)
 			// view.detached();		// ???
 			view.unbind();
 		};

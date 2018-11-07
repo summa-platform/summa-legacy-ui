@@ -22,17 +22,9 @@ export class App {
 		let admin = this.store.currentUser.role === 'admin';
 		// admin = true;
 		config.title = 'SUMMA';
-		// let entitiesNavigationStrategy = (instruction) => {
-		// 	// console.log('FRAGMENT', instruction.fragment, instruction)
-		// 	if(instruction.params.entityID) {
-		// 		instruction.config.moduleId = 'entity';
-		// 	}
-		// };
 		config.map([
 			{ route: '', redirect: 'trending' },
 			{ route: 'trending', name: 'trending', moduleId: 'trending/index', nav: true, title: 'Trending', settings: { svgicon: 'trending' } },
-			// { route: ['entities', 'entities/:entityID', 'entities/search/:searchText'], name: 'entities', moduleId: 'entities',
-			// 	navigationStrategy: entitiesNavigationStrategy, nav: true, title: 'Entities', settings: { svgicon: 'account-balance' } },
 			{ route: 'entities', name: 'entities', moduleId: 'entities', nav: true, title: 'Entities',
 				settings: { svgicon: 'account-balance', menu: 'entities' } },
 			{ route: 'entities/search/:searchText?', name: 'entitiesSearch', moduleId: 'entities', nav: false, title: 'Entities',
@@ -43,18 +35,15 @@ export class App {
 			{ route: 'feeds', name: 'feeds', moduleId: 'feeds', nav: admin, title: 'Feeds', settings: { glyphicon: 'list' } },
 			{ route: 'users', name: 'users', moduleId: 'users', nav: admin, title: 'Users', settings: { glyphicon: 'user' } },
 			{ route: ['reports', 'reports/:reportID'], name: 'reports', moduleId: 'reports', nav: admin, title: 'Reports', settings: { glyphicon: 'envelope' } },
-			// { route: 'reports/:reportID', name: 'report', moduleId: 'reports', nav: false, title: 'Reports', settings: { glyphicon: 'envelope' } },
 			{ route: 'logout', name: 'logout', moduleId: 'logout', nav: true, title: 'Logout', settings: { glyphicon: 'off' } },
 		]);
 	}
 
 	activate(params) {
-		// log.debug('APP activate:', params);
 	}
 
 	attached() {
 		this.tooltip = $('[data-toggle="tooltip"]').tooltip();
-		// console.log('ROUTER:', this.router);
 	}
 
 	async feedback() {

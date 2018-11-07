@@ -31,7 +31,7 @@ export class FeedSettingsDialog {
 		}
 
 		if(this.services.altTouch || event.altKey || event.shiftKey || event.metaKey || event.ctrlKey) {
-			// use any modifier as and excuse to open in separate tab/window
+			// use any modifier as an excuse to open in separate tab/window
 			window.open(url, '_blank');
 		} else {
 			window.location.href = url;
@@ -42,8 +42,6 @@ export class FeedSettingsDialog {
 	async modelChanged(feed) {
 
 		let trending = await this.store.getFeedTrending(feed.id);
-		// trending.epochTimeSecs
-		// trending.last24hStats
 
 		this.epochTimeSecs = trending.epochTimeSecs;
 		const trendObject = trending.last24hStats;
