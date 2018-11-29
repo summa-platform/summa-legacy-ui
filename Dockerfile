@@ -1,8 +1,11 @@
-FROM node:8 as prebuild
+FROM node:10 as prebuild
 RUN npm install -g aurelia-cli yarn
 WORKDIR /src
 COPY package.json /src/package.json
-RUN yarn
+COPY package-lock.json /src/package-lock.json
+# COPY yarn.lock /src/yarn.lock
+# RUN yarn
+RUN npm install
 
 
 FROM prebuild as build
